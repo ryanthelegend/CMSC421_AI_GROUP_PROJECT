@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Summarizer</title>
+</head>
+<body>
+    <h1>Text Summarizer</h1>
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="text" rows="10" cols="50">Enter text to summarize...</textarea><br>
+        <input type="submit" value="Summarize">
+    </form>
+    {% if summary %}
+        <h2>Summary</h2>
+        <p>{{ summary }}</p>
+    {% endif %}
+</body>
+</html>

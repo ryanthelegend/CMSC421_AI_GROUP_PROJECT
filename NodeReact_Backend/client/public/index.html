@@ -21,12 +21,19 @@
 <div id="Chatbox" class="tabcontent">
   <h3>Chatbox</h3>
   <textarea id="chatInput" placeholder="Enter your message here..."></textarea>
-  <button onclick="submitChat()">Submit</button>
+  <button id="submitBtn">Submit</button>
+  <h3>Output:</h3>
+  <textarea id="chatOutput" readonly></textarea>
 </div>
 
 <div id="PDF Summarizer" class="tabcontent">
   <h3>PDF Summarizer</h3>
-  <p>This is where the PDF summarizer will be.</p>
+  <form id="pdfForm">
+    <input type="file" id="pdfInput" accept=".pdf">
+    <button type="submit">Submit</button>
+  </form>
+  <h3>Output:</h3>
+  <textarea id="pdfOutput" readonly></textarea>
 </div>
 
 <div id="URL Summarizer" class="tabcontent">
@@ -36,7 +43,7 @@
 
 <script>
 function openTab(evt, tabName) {
-    var i, tabcontent, tablinks;
+    let i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
         tabcontent[i].style.display = "none";
@@ -48,8 +55,42 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
 }
+
+document.getElementById("submitBtn").addEventListener('click', function(){
+    let chatInput = document.getElementById("chatInput").value;
+    fetch('/generate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({prompt: chatInput}),
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("chatOutput").value = data.response;
+        console.log(data.response);
+    });
+});
+
+document.getElementById("pdfForm").addEventListener('submit', function(e){
+    e.preventDefault();
+    let pdfPath = document.getElementById("pdfInput").value;
+    fetch('/generate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({pdf_path: pdfPath}),
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("pdfOutput").value = data.response;
+        console.log(data.response);
+    });
+});
+
 // Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
+// document.getElementById("defaultOpen").click(); // This line is commented out as there is no element with id="defaultOpen" in the HTML.
 </script>
 
 </body>

@@ -23,10 +23,10 @@ token = "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" # REPLACE WITH HUGGINGFACE TOKEN
 
 try:
     # Loading the model
-    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf", token=token, device_map='auto')
+    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto')
 
     # Loading the tokenizer
-    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf", token=token)
+    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
 
 except Exception as e:
     print(f"An error occurred: {e}")

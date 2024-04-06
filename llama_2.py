@@ -113,8 +113,7 @@ def generate():
     else:
       prompt += data['prompt']
 
-    max_tokens = data.get('max_tokens', 20)
-    max_tokens = max(10, min(max_tokens, 1000)) # some range of max_tokens
+    max_tokens = len(prompt)
 
     response = llama2_response(prompt, max_tokens=max_tokens)
 

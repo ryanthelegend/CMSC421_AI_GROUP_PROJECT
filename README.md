@@ -1,25 +1,30 @@
 ## Getting started:
 
 ### Seting up the environment
-cd backend
-python3 -m venv venv
-source venv/bin/activate 
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+`cd backend`
+
+`python3 -m venv venv`
+
+`source venv/bin/activate`
+
+`python -m pip install --upgrade pip`
+
+`pip install -r requirements.txt`
 
 ### Running the backend
-screen -dmS backend python ./llama2.py
+`screen -dmS backend python ./llama2.py`
 
-* To close the backend: screen -S backend -X quit
+* To close the backend: `screen -S backend -X quit`
+
 
 
 
 ### Running the client 
 
-installing nodejs: ???
+installing nodejs: `to be added`
 
-cd client
-npm start
+`cd client`
+`npm start`
 
 
 

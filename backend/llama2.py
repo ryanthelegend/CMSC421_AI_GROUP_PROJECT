@@ -1,6 +1,12 @@
 import torch
 import torch.nn as nn
 from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM
+import fitz
+import requests
+from bs4 import BeautifulSoup
+from requests.exceptions import HTTPError
+from flask import Flask, request, jsonify
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -27,19 +33,8 @@ def llama2_response(prompt, max_tokens=20):
 
     return response
 
-prompt = "1 + 1 = ?"
-llama2_response
-
-# test purpose
-def prompt_response():
-  user_input = input("Please enter your prompt: ")
-  response = llama2_response(user_input)
-  print("Your prompt: ", user_input)
-  print()
-  print("Response: ", response)
 
 
-import fitz
 def extract_text_from_pdf(pdf_path):
     document = fitz.open(pdf_path)
     text = ""
@@ -48,11 +43,6 @@ def extract_text_from_pdf(pdf_path):
     return text
 
 
-
-
-import requests
-from bs4 import BeautifulSoup
-from requests.exceptions import HTTPError
 
 # maybe need to tune when testing
 blacklist = [
@@ -82,7 +72,6 @@ def extract_text_from_url(url):
     else:
         raise HTTPError(f'Failed to retrieve content from {url}, Status code: {response.status_code}')
 
-from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 

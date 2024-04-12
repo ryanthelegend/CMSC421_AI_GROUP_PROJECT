@@ -18,7 +18,7 @@ token = "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" # REPLACE WITH HUGGINGFACE TOKEN
 
 try:
     # Loading the model
-    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto')
+    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto', torch_dtype=torch.bfloat16, low_cpu_mem_usage=True)
 
     # Loading the tokenizer
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
@@ -78,6 +78,8 @@ app = Flask(__name__)
 @app.route('/generate', methods=['POST'])
 def generate():
     data = request.json
+    print(f"Received request: {data}")
+
     prompt = "Summarize the following text:\n"
 
     if 'url' in data:
@@ -89,6 +91,7 @@ def generate():
 
     max_tokens = len(prompt)
 
+    print("Waiting for llama2 response...")
     response = llama2_response(prompt, max_tokens=max_tokens)
 
     return jsonify({'response': response})

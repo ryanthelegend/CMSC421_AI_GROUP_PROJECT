@@ -12,7 +12,7 @@
 `pip install -r requirements.txt`
 
 ### Running the backend
-`screen -dmS backend python ./llama2.py`
+`screen -dmS backend python ./backend/llama2.py`
 
 * To close the backend: `screen -S backend -X quit`
 

@@ -1,24 +1,26 @@
 import torch
 import torch.nn as nn
-from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM, QuantoConfig
 import fitz
 import requests
 from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+import os
+import traceback
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 
-token = "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" # REPLACE WITH HUGGINGFACE TOKEN FOR AUTH OR LOCAL AUTH USING huggingface-cli login command
-# Loading the model
-
+token = os.getenv('TOKEN')
 
 try:
     # Loading the model
-    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto')
+    quantization_config = QuantoConfig(weights="int8")
+    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
 
     # Loading the tokenizer
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
@@ -74,21 +76,29 @@ def extract_text_from_url(url):
 
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/generate', methods=['POST'])
 def generate():
-    data = request.json
-    prompt = "Summarize the following text:\n"
+    try:
+        data = request.json
+        print("Received data:",data)
+        prompt = "Summarize the following text:\n"
 
-    if 'url' in data:
-      prompt += extract_text_from_url(data['url'])
-    elif 'pdf_path' in data:
-      prompt += extract_text_from_pdf(data['pdf_path'])
-    else:
-      prompt += data['prompt']
+        if 'url' in data:
+            prompt += extract_text_from_url(data['url'])
+        elif 'pdf_path' in data:
+            prompt += extract_text_from_pdf(data['pdf_path'])
+        else:
+            prompt += data['prompt']
 
-    max_tokens = len(prompt)
+        max_tokens = len(prompt)
 
-    response = llama2_response(prompt, max_tokens=max_tokens)
+        response = llama2_response(data['prompt'], max_tokens=50)
 
-    return jsonify({'response': response})
+        return jsonify({'response': response})
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}),500
+if __name__ == '__main__':
+    app.run(debug=True,port=5001)

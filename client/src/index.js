@@ -13,16 +13,13 @@ root.render(
   </React.StrictMode>
 );
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
+function TabPanel({children,value,index}) {
   return (
     <div
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      {...other}
     >
       {value === index && (
         <Box p={3}>
@@ -33,7 +30,7 @@ function TabPanel(props) {
   );
 }
 
-export default function SimpleTabs() {
+export default function SimpleTabs({ input,onInputChange,onSubmit,response,loading }) {
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -51,8 +48,21 @@ export default function SimpleTabs() {
       </AppBar>
       <TabPanel value={value} index={0}>
         <h3>Chatbox</h3>
-        <TextareaAutosize aria-label="empty textarea" placeholder="Enter your message here..." />
-        <Button variant="contained" color="primary">Submit</Button>
+        <TextareaAutosize 
+          aria-label="empty textarea" 
+          placeholder="Enter your message here..." 
+          value = {input}
+          onChange = {onInputChange}
+        />
+        <Button 
+          variant="contained" 
+          color="primary"
+          onClick = {()=>onSubmit('generate')}
+        >
+          Submit
+        </Button>
+        {loading && <p>Loading...</p>}
+        {response && <div><h4>Response:</h4><p>{response}</p></div>}
       </TabPanel>
       <TabPanel value={value} index={1}>
         <h3>PDF Summarizer</h3>

@@ -1,7 +1,7 @@
 ## Getting started:
 
 ### Seting up the environment
-`cd backend`
+
 
 `python3 -m venv venv`
 

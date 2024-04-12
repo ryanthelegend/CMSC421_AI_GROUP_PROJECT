@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM, QuantoConfig
+from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM, QuantoConfig, BitsAndBytesConfig
 import fitz
 import requests
 from bs4 import BeautifulSoup
@@ -10,8 +10,9 @@ from flask_cors import CORS
 import os
 import traceback
 
+gpu = True if torch.cuda.is_available() else False
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if (gpu==True) else "cpu")
 
 
 
@@ -19,7 +20,7 @@ token = os.getenv('TOKEN')
 
 try:
     # Loading the model
-    quantization_config = QuantoConfig(weights="int8")
+    quantization_config = QuantoConfig(weights="int8") if (gpu==False) else BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
 
     # Loading the tokenizer

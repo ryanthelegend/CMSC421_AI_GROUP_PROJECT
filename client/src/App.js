@@ -1,80 +1,57 @@
-import React, {useEffect, useState} from 'react'
-import { generateSummary  } from './services/summaryServices'
+import React, { useState } from 'react';
+import SimpleTabs from './index.js'; 
 
 function App() {
   const [input, setInput] = useState('');
-  const [summary, setSummary] = useState('');
+  const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleInputChange = (event) => {
+    setInput(event.target.value);
+  };
+
+  const handleSubmit = async (endpoint) => {
     setLoading(true);
-    setSummary(''); 
     try {
-      const data = await generateSummary({ prompt: input });
-      setSummary(data.response);
+      const response = await fetch(`http://localhost:5001/${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: input }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error, Status: ${response.status}`);
+      }
+      const data = response.status !== 204 ? await response.text() : {}
+      try{
+        jsonData = JSON.parse(data)
+        setResponse(jsonData.response || "No Response body.")
+      } catch (error){
+        console.error('Error parsing JSON:',error)
+        setResponse("Response is not in JSON Format.")
+      }
+    
     } catch (error) {
-      console.error('There was an error generating the summary:', error);
+      console.error('Error fetching data:', error);
+      setResponse("Failed to fetch response.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Enter text or URL"
-        />
-        <button type="submit" disabled={loading}>
-          Summarize
-        </button>
-      </form>
-
-      {loading && <p>Loading...</p>}
-
-      {summary && (
-        <div>
-          <h2>Summary</h2>
-          <p>{summary}</p>
-        </div>
-      )}
+      <SimpleTabs
+        input={input}
+        onInputChange={handleInputChange}
+        onSubmit={handleSubmit}
+        response={response}
+        loading={loading}
+      />
     </div>
   );
 }
 
-/* 
-function App() {
-  
-  const [backendData, setBackendData] = useState([{}])
-
-  useEffect (() => {
-    fetch("/api").then(
-      response => response.json()
-    ).then(
-      data => { 
-        setBackendData(data)
-      }
-
-    )
-  }, [])
-
-  return (
-    <div>
-
-      {(typeof backendData.users === 'undefined') ? ( 
-
-        <p>Loading...</p>
-      ): (
-        backendData.users.map((user, i) => (
-          <p key={i}>{user}</p>
-        ))
-        )}
-      
-
-    </div>
-  )
-}*/
-
-export default App
+export default App;

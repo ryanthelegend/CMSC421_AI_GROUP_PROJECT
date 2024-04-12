@@ -92,3 +92,7 @@ def generate():
     response = llama2_response(prompt, max_tokens=max_tokens)
 
     return jsonify({'response': response})
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

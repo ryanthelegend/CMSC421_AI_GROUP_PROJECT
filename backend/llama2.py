@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM, BitsAndBytesConfig
 import fitz
 import requests
 from bs4 import BeautifulSoup
@@ -18,11 +18,12 @@ token = "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" # REPLACE WITH HUGGINGFACE TOKEN
 
 try:
     # Loading the model
-    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto', torch_dtype=torch.bfloat16, low_cpu_mem_usage=True)
+    model_name = "meta-llama/Llama-2-7b-chat-hf"
+    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
+    model = AutoModelForCausalLM.from_pretrained(model_name, token=token, device_map='auto', quantization_config=quantization_config)
 
     # Loading the tokenizer
-    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
-
+    tokenizer = AutoTokenizer.from_pretrained(model_name, token=token)
 except Exception as e:
     print(f"An error occurred: {e}")
 

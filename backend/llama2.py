@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM, BitsAndBytesConfig
+from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM, BitsAndBytesConfig, QuantoConfig
 import fitz
 import requests
 from bs4 import BeautifulSoup
@@ -19,9 +19,10 @@ token = "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" # REPLACE WITH HUGGINGFACE TOKEN
 try:
     # Loading the model
     model_name = "meta-llama/Llama-2-7b-chat-hf"
-    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
+    #quantization_config = BitsAndBytesConfig(load_in_4bit=True)
+    quantization_config = QuantoConfig(weights="int8")
     model = AutoModelForCausalLM.from_pretrained(model_name, token=token, device_map='auto', quantization_config=quantization_config)
-
+    
     # Loading the tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name, token=token)
 except Exception as e:

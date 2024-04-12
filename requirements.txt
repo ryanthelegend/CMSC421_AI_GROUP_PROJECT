@@ -51,10 +51,13 @@ mpmath==1.3.0
     # via sympy
 networkx==3.3
     # via torch
+ninja==1.11.1.1
+    # via quanto
 numpy==1.26.4
     # via
     #   accelerate
     #   bitsandbytes
+    #   quanto
     #   transformers
 nvidia-cublas-cu12==12.1.3.1
     # via
@@ -103,6 +106,8 @@ pyyaml==6.0.1
     #   accelerate
     #   huggingface-hub
     #   transformers
+quanto==0.1.0
+    # via -r requirements.in
 regex==2023.12.25
     # via transformers
 requests==2.31.0
@@ -113,6 +118,7 @@ requests==2.31.0
 safetensors==0.4.2
     # via
     #   accelerate
+    #   quanto
     #   transformers
 soupsieve==2.5
     # via beautifulsoup4
@@ -125,6 +131,7 @@ torch==2.2.2
     #   -r requirements.in
     #   accelerate
     #   bitsandbytes
+    #   quanto
 tqdm==4.66.2
     # via
     #   huggingface-hub

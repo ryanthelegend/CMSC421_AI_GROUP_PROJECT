@@ -9,6 +9,10 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import traceback
+import base64
+from io import BytesIO
+import tempfile
+import os
 
 gpu = True if torch.cuda.is_available() else False
 
@@ -82,14 +86,20 @@ CORS(app)
 @app.route('/generate', methods=['POST'])
 def generate():
     try:
-        data = request.json
+        data = request.get_json()
         print("Received data:",data)
         prompt = "Summarize the following text:\n"
 
         if 'url' in data:
             prompt += extract_text_from_url(data['url'])
-        elif 'pdf_path' in data:
-            prompt += extract_text_from_pdf(data['pdf_path'])
+
+        elif 'pdf_file' in data:
+            pdf_data = base64.b64decode(data['pdf_file'].split(',')[1])
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
+                temp_pdf.write(pdf_data)
+            prompt += extract_text_from_pdf(temp_pdf.name)
+            os.unlink(temp_pdf.name)
+
         else:
             prompt += data['prompt']
 
@@ -100,6 +110,7 @@ def generate():
         return jsonify({'response': response})
     except Exception as e:
         traceback.print_exc()
-        return jsonify({'error': str(e)}),500
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True,port=5001)

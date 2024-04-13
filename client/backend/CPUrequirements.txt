@@ -1,0 +1,10 @@
+Flask
+torch
+torchvision
+transformers
+requests
+beautifulsoup4
+pymupdf
+quanto
+flask_cors
+

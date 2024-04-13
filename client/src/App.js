@@ -26,7 +26,7 @@ function App() {
       }
       const data = response.status !== 204 ? await response.text() : {}
       try{
-        jsonData = JSON.parse(data)
+        const jsonData = JSON.parse(data)
         setResponse(jsonData.response || "No Response body.")
       } catch (error){
         console.error('Error parsing JSON:',error)

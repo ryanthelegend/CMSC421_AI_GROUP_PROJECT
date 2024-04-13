@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM, QuantoConfig, BitsAndBytesConfig
+from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM, QuantoConfig
 import fitz
 import requests
 from bs4 import BeautifulSoup
@@ -20,7 +20,7 @@ token = os.getenv('TOKEN')
 
 try:
     # Loading the model
-    quantization_config = QuantoConfig(weights="int8") if (gpu==False) else BitsAndBytesConfig(load_in_4bit=True)
+    quantization_config = QuantoConfig(weights="int8")
     model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
 
     # Loading the tokenizer

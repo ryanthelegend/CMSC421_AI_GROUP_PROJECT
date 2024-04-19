@@ -1,42 +1,85 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head> 
+	<link rel="icon" href="ico.png">
     <style>
         body {font-family: Arial;}
-        .tab {overflow: hidden; border: 1px solid #ccc; background-color: #f1f1f1;}
-        .tab button {background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s;}
-        .tab button:hover {background-color: #ddd;}
-        .tab button.active {background-color: #ccc;}
+        .tab {overflow: hidden; border: 1px solid #3a9fbf; background-color: #3a9fbf;}
+        .tab button {background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 42px 46px; transition: 0.3s; font-size: 18px; font-family:Monospace}
+        .tab button:hover {background-color: white; color: black; padding: 42px 42px;}
+        .tab button.active {background-color: white; padding: 42px 42px}
         .tabcontent {display: none; padding: 6px 12px; border-top: none;}
+		.button {
+		  border: none;
+		  color: white;
+		  padding: 6px 26px;
+		  text-align: center;
+		  text-decoration: none;
+		  display: inline-block;
+		  font-size: 16px;
+		  margin: 4px 2px;
+		  transition-duration: 0.4s;
+		  cursor: pointer;
+		  border-radius: 12px;
+		}
+		.submitbutton {
+  			background-color: #3a9fbf;
+  			color: white;
+  			border: 2px solid #3a9fbf;
+		}
+		.submitbutton:hover {
+  			background-color: white;
+  			color: black;
+		}
     </style>
 </head>
 <body>
 
+<div id="Home" class="tabcontent" style="position:absolute;top:60px;padding:40px">
+	<h1>Home</h1>
+	<h2>Description</h2>
+	<p></p>
+	<!--
+	<a href="javascript:void(0)" onclick="openTab(event, 'Chatbox')">Chatbox</a>
+	<br>
+	<a href="javascript:void(0)" onclick="openTab(event, 'PDF Summarizer')">PDF Summarizer</a>
+	<br>
+	<a href="javascript:void(0)" onclick="openTab(event, 'URL Summarizer')">URL Summarizer</a>
+	-->
+</div>
+
+
 <div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Chatbox')">Chatbox</button>
-  <button class="tablinks" onclick="openTab(event, 'PDF Summarizer')">PDF Summarizer</button>
-    <button class="tablinks" onclick="openTab(event, 'URL Summarizer')">URL Summarizer</button>
+	<img src="chatbot_icon.png" alt="ChatBot Icon" style="width:85px;height:55px;padding:25px;float:left;" onclick="openTab(event,'Home')">
+	<button class="tablinks" onclick="openTab(event, 'Chatbox')">Chatbox</button>
+	<button class="tablinks" onclick="openTab(event, 'PDF Summarizer')">PDF Summarizer</button>
+	<button class="tablinks" onclick="openTab(event, 'URL Summarizer')">URL Summarizer</button>
 </div>
 
-<div id="Chatbox" class="tabcontent">
+
+<div id="Chatbox" class="tabcontent" style="padding:25px">
   <h3>Chatbox</h3>
-  <textarea id="chatInput" placeholder="Enter your message here..."></textarea>
-  <button id="submitBtn">Submit</button>
+  <textarea id="chatInput" placeholder="Enter your message here..." rows="15" cols="100"></textarea>
+  <br>
+  <br>
+  <button class="button submitbutton" id="submitBtn">Submit</button>
   <h3>Output:</h3>
-  <textarea id="chatOutput" readonly></textarea>
+  <textarea id="chatOutput" readonly rows="15" cols="100"></textarea>
 </div>
 
-<div id="PDF Summarizer" class="tabcontent">
+<div id="PDF Summarizer" class="tabcontent" style="padding:25px">
   <h3>PDF Summarizer</h3>
   <form id="pdfForm">
     <input type="file" id="pdfInput" accept=".pdf">
-    <button type="submit">Submit</button>
+	<br>
+	<br>
+    <button type="submit" class="button submitbutton">Submit</button>
   </form>
   <h3>Output:</h3>
-  <textarea id="pdfOutput" readonly></textarea>
+  <textarea id="pdfOutput" readonly rows="15" cols="100"></textarea>
 </div>
 
-<div id="URL Summarizer" class="tabcontent">
+<div id="URL Summarizer" class="tabcontent" style="padding:25px">
   <h3>URL Summarizer</h3>
   <p>This is where the URL summarizer will be.</p>
 </div>

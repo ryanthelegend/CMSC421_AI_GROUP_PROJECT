@@ -3,8 +3,21 @@
 <head> 
 	<link rel="icon" href="ico.png">
     <style>
-        body {font-family: Arial;}
-        .tab {overflow: hidden; border: 1px solid #3a9fbf; background-color: #3a9fbf;}
+        body {
+            font-family: Arial;
+            background: rgba(0,0,0,0.5);
+            background-image: url('https://www.hdrshooter.com/wp-content/uploads/2023/02/img1.jpg');
+            background-blend-mode: multiply;
+            background-size: cover;
+            color: white;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            display: flex;
+            margin-top: 20px;
+            padding: 20px;
+        }
+        .tab {overflow: hidden; border: 1px solid #3a9fbf; background-color: #3a9fbf; margin: 20px;}
         .tab button {background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 42px 46px; transition: 0.3s; font-size: 18px; font-family:Monospace}
         .tab button:hover {background-color: white; color: black; padding: 42px 42px;}
         .tab button.active {background-color: white; padding: 42px 42px}
@@ -35,18 +48,7 @@
 </head>
 <body>
 
-<div id="Home" class="tabcontent" style="position:absolute;top:60px;padding:40px">
-	<h1>Home</h1>
-	<h2>Description</h2>
-	<p></p>
-	<!--
-	<a href="javascript:void(0)" onclick="openTab(event, 'Chatbox')">Chatbox</a>
-	<br>
-	<a href="javascript:void(0)" onclick="openTab(event, 'PDF Summarizer')">PDF Summarizer</a>
-	<br>
-	<a href="javascript:void(0)" onclick="openTab(event, 'URL Summarizer')">URL Summarizer</a>
-	-->
-</div>
+
 
 
 <div class="tab">
@@ -57,7 +59,7 @@
 </div>
 
 
-<div id="Chatbox" class="tabcontent" style="padding:25px">
+<div id="Chatbox" class="tabcontent" style="background: rgba(58, 187, 238, 0.5);padding:25px">
   <h3>Chatbox</h3>
   <textarea id="chatInput" placeholder="Enter your message here..." rows="15" cols="100"></textarea>
   <br>
@@ -67,7 +69,7 @@
   <textarea id="chatOutput" readonly rows="15" cols="100"></textarea>
 </div>
 
-<div id="PDF Summarizer" class="tabcontent" style="padding:25px">
+<div id="PDF Summarizer" class="tabcontent" style="background: rgba(58, 187, 238, 0.5);padding:25px">
   <h3>PDF Summarizer</h3>
   <form id="pdfForm">
     <input type="file" id="pdfInput" accept=".pdf">
@@ -79,9 +81,39 @@
   <textarea id="pdfOutput" readonly rows="15" cols="100"></textarea>
 </div>
 
-<div id="URL Summarizer" class="tabcontent" style="padding:25px">
+<div id="URL Summarizer" class="tabcontent" style="background: rgba(58, 187, 238, 0.5);padding:25px">
   <h3>URL Summarizer</h3>
-  <p>This is where the URL summarizer will be.</p>
+    <textarea id="urlInput" placeholder="Enter a URL here" rows="15" cols="100"></textarea>	<br><br>
+
+    <button id="urlSubmit" class="button submitbutton">Submit</button><br><br>
+    <textarea id="urlOutput" rows="15" cols="100" readonly></textarea>
+</div>
+
+<div id="Home" class="tabcontent" style="background: rgba(58, 187, 238, 0.5); padding: 20px; text-align: center; ">
+	<h1>Welcome to Our CMSC421  LLAMA2/3 Project!</h1>
+	<h2>We are a group of dedicated students who have come together to create this project as part of our final class assignment. Our goal was to apply the knowledge and skills we've gained throughout our course, and we're proud to present the result of our hard work.</h2>
+	<img src="https://umd-brand.transforms.svdcdn.com/production/uploads/images/testudo-example-color.png?w=349&h=323&auto=compress%2Cformat&fit=crop&dm=1613801968&s=e580e8adbe3e35872ab9dc62579bc9ac">
+    <p style="text-align: left;">
+        Features of Our Project: 
+        <br>
+        <br>Our project is built using HTML, CSS, and JavaScript. The backend is implemented using Python and the Flask web framework. The AI system is powered by LLAMA2 locally via Huggingface and LLAMA3 via the Perplexity API .
+        <br>Our project includes three main features: Chatbox, PDF Summarizer, and URL Summarizer.
+        <br>Chatbox: Allows users to enter a message into a text area and submit it by clicking a button. The response from the system is displayed in a separate read-only text area.
+        <br>PDF Summarizer: Allows users to upload a PDF file. The fitz python library analyzes and extract the text of the uploaded PDF and then llama generates the summary.
+        <br>URL Summarizer: Allows users to enter a URL and receive a summary of the content at that URL. Text is first extracted and parsed with BeautifulSoup</p>
+
+        Examples:
+        <br>
+        <img src="1.PNG" alt="Chatbox Example" style="width: 1000px; height: 600px;">
+        
+
+	<!--
+	<a href="javascript:void(0)" onclick="openTab(event, 'Chatbox')">Chatbox</a>
+	<br>
+	<a href="javascript:void(0)" onclick="openTab(event, 'PDF Summarizer')">PDF Summarizer</a>
+	<br>
+	<a href="javascript:void(0)" onclick="openTab(event, 'URL Summarizer')">URL Summarizer</a>
+	-->
 </div>
 
 <script>
@@ -128,6 +160,23 @@ document.getElementById("pdfForm").addEventListener('submit', function(e){
     .then(response => response.json())
     .then(data => {
         document.getElementById("pdfOutput").value = data.response;
+        console.log(data.response);
+    });
+});
+
+document.getElementById("urlSubmit").addEventListener('click', function(e){
+    e.preventDefault();
+    let urlInput = document.getElementById("urlInput").value;
+    fetch('/generate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({url: urlInput}),
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("urlOutput").value = data.response;
         console.log(data.response);
     });
 });

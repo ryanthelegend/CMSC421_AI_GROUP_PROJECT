@@ -207,3 +207,6 @@ werkzeug==3.0.2
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
+
+flask_cors
+pymupdf

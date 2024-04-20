@@ -1,0 +1,7 @@
+beautifulsoup4==4.12.3
+fitz==0.0.1.dev2
+Flask==3.0.2
+pip
+Requests==2.31.0
+torch
+transformers

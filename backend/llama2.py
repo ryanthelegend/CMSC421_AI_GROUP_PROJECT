@@ -9,25 +9,33 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import traceback
+from openai import OpenAI
 
 gpu = True if torch.cuda.is_available() else False
 
 device = torch.device("cuda" if (gpu==True) else "cpu")
 
 
+model = "llama3" # or llama2
+
+API_KEY = os.getenv('api')
 
 token = os.getenv('TOKEN')
 
-try:
-    # Loading the model
-    quantization_config = QuantoConfig(weights="int8")
-    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
 
-    # Loading the tokenizer
-    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
+if model == 'llama3':
+    client = OpenAI(api_key=API_KEY, base_url="https://api.perplexity.ai")
+else:
+    try:
+        # Loading the model
+        quantization_config = QuantoConfig(weights="int8")
+        model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
 
-except Exception as e:
-    print(f"An error occurred: {e}")
+        # Loading the tokenizer
+        tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 def llama2_response(prompt, max_tokens=20):
     inputs = tokenizer(prompt, return_tensors='pt').to(device)
@@ -57,6 +65,14 @@ blacklist = [
     'head',
     'input',
     'script',
+    'style',
+    'footer',
+    'nav',
+    'aside',
+    'form',
+    'iframe',
+    'button',
+    'label'
 ]
 
 def extract_text_from_url(url):
@@ -71,13 +87,14 @@ def extract_text_from_url(url):
           if t.parent.name not in blacklist:
             output += '{} '.format(t)
 
-        return output
+        return output[:8000]
     else:
         raise HTTPError(f'Failed to retrieve content from {url}, Status code: {response.status_code}')
 
 
 app = Flask(__name__)
 CORS(app)
+
 
 @app.route('/generate', methods=['POST'])
 def generate():
@@ -91,15 +108,45 @@ def generate():
         elif 'pdf_path' in data:
             prompt += extract_text_from_pdf(data['pdf_path'])
         else:
-            prompt += data['prompt']
+            prompt = data['prompt']
+        print("Prompt:",prompt)
+        if model == 'llama3':
+            messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are an artificial intelligence assistant, and you need to "
+                "engage in a helpful, detailed, polite conversation with a user."
+            ),
+        },
+        {
+            "role": "user",
+            "content": (
+                prompt
+            ),
+        },
+    ]
+            
+            response = client.chat.completions.create(
+                model="llama-3-70b-instruct",
+                messages=messages,
+            )
+            response = response if isinstance(response, dict) else response.to_dict()
+            response = response['choices'][0]['message']['content']
+            
+        else:
 
-        max_tokens = len(prompt)
+            response = llama2_response(data['prompt'], max_tokens=50)
+            
+        print(response)
+        
 
-        response = llama2_response(data['prompt'], max_tokens=50)
-
+        print(f"Response from {model}:",response)
         return jsonify({'response': response})
     except Exception as e:
         traceback.print_exc()
         return jsonify({'error': str(e)}),500
+
 if __name__ == '__main__':
     app.run(debug=True,port=5001)
+    

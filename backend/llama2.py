@@ -11,31 +11,30 @@ import os
 import traceback
 from openai import OpenAI
 
-gpu = True if torch.cuda.is_available() else False
 
-device = torch.device("cuda" if (gpu==True) else "cpu")
-
-
-model = "llama3" # or llama2
-
-API_KEY = os.getenv('api')
-
-token = os.getenv('TOKEN')
-
-
-if model == 'llama3':
-    client = OpenAI(api_key=API_KEY, base_url="https://api.perplexity.ai")
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
 else:
-    try:
-        # Loading the model
-        quantization_config = QuantoConfig(weights="int8")
-        model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
+    device = torch.device("cuda" if (torch.cuda.is_available()) else "cpu")
 
-        # Loading the tokenizer
-        tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
 
-    except Exception as e:
-        print(f"An error occurred: {e}")
+
+API_KEY = os.getenv('api') # API key
+
+token = os.getenv('TOKEN') # Huggingface token
+
+
+
+try:
+    # Loading the model
+    quantization_config = QuantoConfig(weights="int8")
+    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
+
+    # Loading the tokenizer
+    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
+
+except Exception as e:
+    print(f"An error occurred: {e}")
 
 def llama2_response(prompt, max_tokens=20):
     inputs = tokenizer(prompt, return_tensors='pt').to(device)
@@ -110,7 +109,11 @@ def generate():
         else:
             prompt = data['prompt']
         print("Prompt:",prompt)
-        if model == 'llama3':
+
+        if 'llama3' in data['model']:
+            
+            client = OpenAI(api_key=API_KEY, base_url="https://api.perplexity.ai")
+
             messages = [
         {
             "role": "system",
@@ -136,9 +139,8 @@ def generate():
             
         else:
 
-            response = llama2_response(data['prompt'], max_tokens=50)
+            response = llama2_response(prompt, max_tokens=50)
             
-        print(response)
         
 
         print(f"Response from {model}:",response)
@@ -148,5 +150,5 @@ def generate():
         return jsonify({'error': str(e)}),500
 
 if __name__ == '__main__':
-    app.run(debug=True,port=5001)
+    app.run(debug=True,port=5001,use_reloader=False)
     

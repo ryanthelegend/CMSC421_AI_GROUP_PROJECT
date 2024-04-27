@@ -110,7 +110,7 @@ def generate():
             prompt = data['prompt']
         print("Prompt:",prompt)
 
-        if 'LLAMA3' in data['model']:
+        if 'llama3' in data['model']:
             
             client = OpenAI(api_key=API_KEY, base_url="https://api.perplexity.ai")
 
@@ -139,9 +139,8 @@ def generate():
             
         else:
 
-            response = llama2_response(data['prompt'], max_tokens=50)
+            response = llama2_response(prompt, max_tokens=50)
             
-        print(response)
         
 
         print(f"Response from {model}:",response)

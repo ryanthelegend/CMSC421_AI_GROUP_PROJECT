@@ -56,6 +56,11 @@
 	<button class="tablinks" onclick="openTab(event, 'Chatbox')">Chatbox</button>
 	<button class="tablinks" onclick="openTab(event, 'PDF Summarizer')">PDF Summarizer</button>
 	<button class="tablinks" onclick="openTab(event, 'URL Summarizer')">URL Summarizer</button>
+    LLM: <select id="modelSelect">
+        
+        <option value="llama2">LLAMA2 (Local)</option>
+        <option value="llama3">LLAMA3 (API)</option>
+    </select>
 </div>
 
 
@@ -117,9 +122,11 @@
 </div>
 
 <script>
+
 function openTab(evt, tabName) {
     let i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
+    
     for (i = 0; i < tabcontent.length; i++) {
         tabcontent[i].style.display = "none";
     }
@@ -133,12 +140,13 @@ function openTab(evt, tabName) {
 
 document.getElementById("submitBtn").addEventListener('click', function(){
     let chatInput = document.getElementById("chatInput").value;
+    let model = document.getElementById("modelSelect").value;
     fetch('/generate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({prompt: chatInput}),
+        body: JSON.stringify({prompt: chatInput, model: model}),
     })
     .then(response => response.json())
     .then(data => {
@@ -150,12 +158,13 @@ document.getElementById("submitBtn").addEventListener('click', function(){
 document.getElementById("pdfForm").addEventListener('submit', function(e){
     e.preventDefault();
     let pdfPath = document.getElementById("pdfInput").value;
+    let model = document.getElementById("modelSelect").value;
     fetch('/generate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({pdf_path: pdfPath}),
+        body: JSON.stringify({pdf_path: pdfPath, model: model}),
     })
     .then(response => response.json())
     .then(data => {
@@ -167,12 +176,13 @@ document.getElementById("pdfForm").addEventListener('submit', function(e){
 document.getElementById("urlSubmit").addEventListener('click', function(e){
     e.preventDefault();
     let urlInput = document.getElementById("urlInput").value;
+    let model = document.getElementById("modelSelect").value;
     fetch('/generate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({url: urlInput}),
+        body: JSON.stringify({url: urlInput, model: model}),
     })
     .then(response => response.json())
     .then(data => {

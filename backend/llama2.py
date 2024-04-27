@@ -16,26 +16,23 @@ gpu = True if torch.cuda.is_available() else False
 device = torch.device("cuda" if (gpu==True) else "cpu")
 
 
-model = "llama3" # or llama2
 
-API_KEY = os.getenv('api')
+API_KEY = os.getenv('api') # API key
 
-token = os.getenv('TOKEN')
+token = os.getenv('TOKEN') # Huggingface token
 
 
-if model == 'llama3':
-    client = OpenAI(api_key=API_KEY, base_url="https://api.perplexity.ai")
-else:
-    try:
-        # Loading the model
-        quantization_config = QuantoConfig(weights="int8")
-        model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
 
-        # Loading the tokenizer
-        tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
+try:
+    # Loading the model
+    quantization_config = QuantoConfig(weights="int8")
+    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
 
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    # Loading the tokenizer
+    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
+
+except Exception as e:
+    print(f"An error occurred: {e}")
 
 def llama2_response(prompt, max_tokens=20):
     inputs = tokenizer(prompt, return_tensors='pt').to(device)
@@ -110,7 +107,11 @@ def generate():
         else:
             prompt = data['prompt']
         print("Prompt:",prompt)
-        if model == 'llama3':
+
+        if 'LLAMA3' in data['model']:
+            
+            client = OpenAI(api_key=API_KEY, base_url="https://api.perplexity.ai")
+
             messages = [
         {
             "role": "system",

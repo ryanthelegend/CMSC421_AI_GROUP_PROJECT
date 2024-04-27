@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from dotenv import load_dotenv
 from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM, QuantoConfig
 import fitz
 import requests
@@ -14,28 +15,38 @@ from PyPDF2 import PdfReader
 from io import BytesIO
 import base64
 
-gpu = True if torch.cuda.is_available() else False
+"""
+Use the .env file to input your Open AI api key and HF token. 
+"""
+API_KEY = os.getenv('OPENAI_API_KEY')  # Your Openai API Key
+token = os.getenv('HF_TOKEN')  # Your Hugging Face Token
 
-device = torch.device("cuda" if (gpu==True) else "cpu")
+# API_KEY = os.getenv('api') # API key
+# token = os.getenv('TOKEN') # Huggingface token
+
+load_dotenv()  # Loads Variables form the env file
 
 
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cuda" if (torch.cuda.is_available()) else "cpu")
 
-API_KEY = os.getenv('api') # API key
 
-token = os.getenv('TOKEN') # Huggingface token
 
 
 
 try:
     # Loading the model
     quantization_config = QuantoConfig(weights="int8")
-    #model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
+    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
 
     # Loading the tokenizer
-    #tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
+    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
 
 except Exception as e:
     print(f"An error occurred: {e}")
+
 
 def llama2_response(prompt, max_tokens=20):
     inputs = tokenizer(prompt, return_tensors='pt').to(device)
@@ -55,6 +66,7 @@ def extract_text_from_pdf(pdf_content):
     for page in pdf_file.pages:
         text += page.extract_text()
     return text
+
 
 
 # maybe need to tune when testing
@@ -111,47 +123,47 @@ def generate():
             prompt += extract_text_from_pdf(data['pdf_file'])
         else:
             prompt = data['prompt']
-        print("Prompt:",prompt)
-
+        print("Prompt:", prompt)
         if 'llama3' in data['model']:
-            
+
             client = OpenAI(api_key=API_KEY, base_url="https://api.perplexity.ai")
 
             messages = [
-        {
-            "role": "system",
-            "content": (
-                "You are an artificial intelligence assistant, and you need to "
-                "engage in a helpful, detailed, polite conversation with a user."
-            ),
-        },
-        {
-            "role": "user",
-            "content": (
-                prompt
-            ),
-        },
-    ]
-            
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an artificial intelligence assistant, and you need to "
+                        "engage in a helpful, detailed, polite conversation with a user."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        prompt
+                    ),
+                },
+            ]
+
             response = client.chat.completions.create(
                 model="llama-3-70b-instruct",
                 messages=messages,
             )
             response = response if isinstance(response, dict) else response.to_dict()
             response = response['choices'][0]['message']['content']
-            
+
         else:
-            
+
             response = llama2_response(prompt, max_tokens=50)
-            
-        
+
+        print(response)
 
         print(f"Response from {data['model']}:",response)
         return jsonify({'response': response})
+
     except Exception as e:
         traceback.print_exc()
-        return jsonify({'error': str(e)}),500
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
-    app.run(debug=True,port=5001)
-    
+    app.run(debug=True, port=5001)

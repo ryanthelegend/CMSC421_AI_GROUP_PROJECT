@@ -57,6 +57,7 @@ export default function SimpleTabs({ input,onInputChange,onSubmit,response,loadi
         <Button 
           variant="contained" 
           color="primary"
+          className = "button-hover-effect"
           onClick = {()=>onSubmit('generate')}
         >
           Submit

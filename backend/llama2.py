@@ -10,12 +10,13 @@ from flask_cors import CORS
 import os
 import traceback
 from openai import OpenAI
+from PyPDF2 import PdfReader
+from io import BytesIO
+import base64
 
+gpu = True if torch.cuda.is_available() else False
 
-if torch.backends.mps.is_available():
-    device = torch.device("mps")
-else:
-    device = torch.device("cuda" if (torch.cuda.is_available()) else "cpu")
+device = torch.device("cuda" if (gpu==True) else "cpu")
 
 
 
@@ -28,10 +29,10 @@ token = os.getenv('TOKEN') # Huggingface token
 try:
     # Loading the model
     quantization_config = QuantoConfig(weights="int8")
-    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
+    #model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
 
     # Loading the tokenizer
-    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
+    #tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
 
 except Exception as e:
     print(f"An error occurred: {e}")
@@ -45,13 +46,15 @@ def llama2_response(prompt, max_tokens=20):
 
 
 
-def extract_text_from_pdf(pdf_path):
-    document = fitz.open(pdf_path)
-    text = ""
-    for page in document:
-        text += page.get_text()
-    return text
 
+def extract_text_from_pdf(pdf_content):
+    base64_data = pdf_content.split(',')[1]
+    decoded_data = base64.b64decode(base64_data)
+    pdf_file = PdfReader(BytesIO(decoded_data))
+    text = ""
+    for page in pdf_file.pages:
+        text += page.extract_text()
+    return text
 
 
 # maybe need to tune when testing
@@ -104,8 +107,8 @@ def generate():
 
         if 'url' in data:
             prompt += extract_text_from_url(data['url'])
-        elif 'pdf_path' in data:
-            prompt += extract_text_from_pdf(data['pdf_path'])
+        elif 'pdf_file' in data:
+            prompt += extract_text_from_pdf(data['pdf_file'])
         else:
             prompt = data['prompt']
         print("Prompt:",prompt)
@@ -138,17 +141,17 @@ def generate():
             response = response['choices'][0]['message']['content']
             
         else:
-
+            
             response = llama2_response(prompt, max_tokens=50)
             
         
 
-        print(f"Response from {model}:",response)
+        print(f"Response from {data['model']}:",response)
         return jsonify({'response': response})
     except Exception as e:
         traceback.print_exc()
         return jsonify({'error': str(e)}),500
 
 if __name__ == '__main__':
-    app.run(debug=True,port=5001,use_reloader=False)
+    app.run(debug=True,port=5001)
     

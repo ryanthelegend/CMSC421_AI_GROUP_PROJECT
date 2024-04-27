@@ -29,10 +29,10 @@ token = os.getenv('TOKEN') # Huggingface token
 try:
     # Loading the model
     quantization_config = QuantoConfig(weights="int8")
-    #model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
+    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token, device_map='auto',quantization_config = quantization_config)
 
     # Loading the tokenizer
-    #tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
+    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token=token)
 
 except Exception as e:
     print(f"An error occurred: {e}")

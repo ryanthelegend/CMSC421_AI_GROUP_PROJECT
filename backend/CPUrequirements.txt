@@ -10,4 +10,4 @@ accelerate
 flask_cors
 openai
 setuptools
-
+PyPDF2

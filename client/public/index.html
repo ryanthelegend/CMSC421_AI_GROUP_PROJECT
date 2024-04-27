@@ -157,20 +157,28 @@ document.getElementById("submitBtn").addEventListener('click', function(){
 
 document.getElementById("pdfForm").addEventListener('submit', function(e){
     e.preventDefault();
-    let pdfPath = document.getElementById("pdfInput").value;
     let model = document.getElementById("modelSelect").value;
-    fetch('/generate', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({pdf_path: pdfPath, model: model}),
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("pdfOutput").value = data.response;
-        console.log(data.response);
-    });
+    let pdfFile = document.getElementById("pdfInput").files[0];
+    let reader = new FileReader();
+    reader.onloadend = function() {
+        let base64data = reader.result;
+        fetch('/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                pdf_file: base64data,
+                model: model
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("pdfOutput").value = data.response;
+            console.log(data.response);
+        });
+    }
+    reader.readAsDataURL(pdfFile);
 });
 
 document.getElementById("urlSubmit").addEventListener('click', function(e){

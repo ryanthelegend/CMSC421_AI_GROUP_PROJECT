@@ -11,9 +11,11 @@ import os
 import traceback
 from openai import OpenAI
 
-gpu = True if torch.cuda.is_available() else False
 
-device = torch.device("cuda" if (gpu==True) else "cpu")
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cuda" if (torch.cuda.is_available()) else "cpu")
 
 
 
@@ -149,5 +151,5 @@ def generate():
         return jsonify({'error': str(e)}),500
 
 if __name__ == '__main__':
-    app.run(debug=True,port=5001)
+    app.run(debug=True,port=5001,use_reloader=False)
     

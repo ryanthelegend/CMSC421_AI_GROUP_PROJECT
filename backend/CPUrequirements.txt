@@ -8,4 +8,6 @@ pymupdf
 quanto
 accelerate
 flask_cors
+openai
+setuptools
 

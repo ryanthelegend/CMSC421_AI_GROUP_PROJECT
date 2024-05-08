@@ -84,10 +84,10 @@ brew install node
 npm start --reset --cache
 ```
 
-**Q: The responses take too long. 
+Q: The responses take too long. 
 A: It is completely normal, especially if you do not have access to a GPU. We have quantized the models to have a right balance between speed and accuracy. 
 
-**Q: I am getting a react dom error. 
+Q: I am getting a react dom error. 
 A: This is also due to not having the latest version of dom
 ```bash
 npm install react@latest react-dom@latest

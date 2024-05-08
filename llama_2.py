@@ -17,7 +17,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 
-token = "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" # REPLACE WITH HUGGINGFACE TOKEN FOR AUTH OR LOCAL AUTH USING huggingface-cli login command
+token = "" # REPLACE WITH HUGGINGFACE TOKEN FOR AUTH OR LOCAL AUTH USING huggingface-cli login command
 # Loading the model
 
 

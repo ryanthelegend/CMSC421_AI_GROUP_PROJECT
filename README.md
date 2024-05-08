@@ -83,8 +83,16 @@ A: This may be due to an older version of Node. Upgrade Node using:
 brew install node
 npm start --reset --cache
 ```
+
 **Q: The responses take too long. 
 A: It is completely normal, especially if you do not have access to a GPU. We have quantized the models to have a right balance between speed and accuracy. 
+
+**Q: I am getting a react dom error. 
+A: This is also due to not having the latest version of dom
+```bash
+npm install react@latest react-dom@latest
+```
+
 
 
 

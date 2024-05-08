@@ -14,9 +14,14 @@ from PyPDF2 import PdfReader
 from io import BytesIO
 import base64
 
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 gpu = True if torch.cuda.is_available() else False
 
 device = torch.device("cuda" if (gpu==True) else "cpu")
+device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+print("Model and tensors will use device:", device)
+
 
 
 

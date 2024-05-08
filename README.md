@@ -35,11 +35,11 @@ Welcome to our project! This guide will walk you through setting up the project 
 8. **Install Requirements**
    - In the backend directory, install the requirements. If you have access to a GPU, install the GPU requirements:
      ```bash
-     pip install -r GPUrequirements
+     pip install -r GPUrequirements.txt
      ```
    - Otherwise, install the CPU requirements:
      ```bash
-     pip install -r CPUrequirements
+     pip install -r CPUrequirements.txt
      ```
 
 9. **Run the Flask Server**

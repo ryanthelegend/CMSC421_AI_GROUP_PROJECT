@@ -1,6 +1,6 @@
 # Getting Started Guide
 
-Welcome to our project! This guide will walk you through setting up the project on your local machine, from pulling the repository to running the client side. Let's dive in. Our code is designed to work primarily in linux and unix environments
+Welcome to our project! This guide will walk you through setting up the project on your local machine, from pulling the repository to running the client side. Let's dive in. Our code is designed to work primarily in linux and unix environments.
 
 ## Setting Up the Backend
 

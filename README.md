@@ -1,6 +1,6 @@
 # Getting Started Guide
 
-Welcome to our project! This guide will walk you through setting up the project on your local machine, from pulling the repository to running the client side. Let's dive in.
+Welcome to our project! This guide will walk you through setting up the project on your local machine, from pulling the repository to running the client side. Let's dive in. Our code is designed to work primarily in linux environments
 
 ## Setting Up the Backend
 
@@ -33,11 +33,11 @@ Welcome to our project! This guide will walk you through setting up the project 
      ```
 
 8. **Install Requirements**
-   - In the backend directory, install the requirements. If you have access to a GPU, install the GPU requirements:
+   - In the backend directory, install the requirements. If you have access to a GPU install both the GPU and CPU requirements:
      ```bash
      pip install -r GPUrequirements.txt
      ```
-   - Otherwise, install the CPU requirements:
+   - Otherwise, install only the CPU requirements:
      ```bash
      pip install -r CPUrequirements.txt
      ```
